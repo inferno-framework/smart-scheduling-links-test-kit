@@ -1,6 +1,6 @@
-require_relative 'inferno_template/patient_group'
+require_relative 'smart_scheduling_links_test_kit/patient_group'
 
-module InfernoTemplate
+module SMARTSchedulingLinks
   class Suite < Inferno::TestSuite
     id :test_suite_template
     title 'Inferno Test Suite Template'
