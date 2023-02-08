@@ -42,4 +42,47 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
       expect(result.result_message).to match(/is not a valid URI/)
     end
   end
+
+  describe 'manifest download test' do
+    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_download' } }
+    let(:url) { 'http://example.com/$bulk-publish' }
+
+    it 'passes if a 200 with valid JSON is received' do
+      manifest_request =
+        stub_request(:get, url)
+          .with(headers: { 'Accept' => 'application/json' })
+          .to_return(status: 200, body: {}.to_json)
+
+      result = run(test, url: url)
+
+      expect(result.result).to eq('pass')
+      expect(manifest_request).to have_been_made.once
+    end
+
+    it 'fails if a 200 is not received' do
+      manifest_request =
+        stub_request(:get, url)
+          .with(headers: { 'Accept' => 'application/json' })
+          .to_return(status: 400, body: {}.to_json)
+
+      result = run(test, url: url)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to include('400')
+      expect(manifest_request).to have_been_made.once
+    end
+
+    it 'fails if the response is not valid JSON' do
+      manifest_request =
+        stub_request(:get, url)
+          .with(headers: { 'Accept' => 'application/json' })
+          .to_return(status: 200, body: '{')
+
+      result = run(test, url: url)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to include('JSON')
+      expect(manifest_request).to have_been_made.once
+    end
+  end
 end
