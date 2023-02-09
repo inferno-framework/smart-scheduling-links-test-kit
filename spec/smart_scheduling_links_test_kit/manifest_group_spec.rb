@@ -85,4 +85,157 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
       expect(manifest_request).to have_been_made.once
     end
   end
+
+  describe 'manifest structure test' do
+    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_structure' } }
+
+    it 'fails if the manifest is not a JSON object' do
+      result = run(test, manifest_json: [].to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('Expected manifest to be a JSON object, but found `Array`')
+    end
+
+    it 'fails if a field is the wrong type' do
+      result = run(test, manifest_json: {}.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('`transactionTime` field should be `String`, but found `NilClass`')
+    end
+
+    it 'fails if a transactionTime is incorrectly formatted' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239',
+        request: 'abc',
+        output: []
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/`transactionTime` is not in `YYYY-MM-DDThh:mm:ss.sss\+zz:zz` format:/)
+    end
+
+    it 'fails if a request is not a valid url' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239+02:00',
+        request: 'httpexample.com/$bulk-publish',
+        output: []
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/is not a valid URI/)
+    end
+
+    it 'fails if an output subfield is an invalid type' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239+02:00',
+        request: 'http://example.com/$bulk-publish',
+        output: [
+          {
+            type: 'Location',
+            url: ['http://example.com/Location']
+          }
+        ]
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/`output\.url` field should be/)
+    end
+
+    it 'fails if an output contains an invalid url' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239+02:00',
+        request: 'http://example.com/$bulk-publish',
+        output: [
+          {
+            type: 'Location',
+            url: 'httpexample.com/Location'
+          }
+        ]
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/is not a valid URI/)
+    end
+
+    it 'fails if output.extension is not a Hash' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239+02:00',
+        request: 'http://example.com/$bulk-publish',
+        output: [
+          {
+            type: 'Location',
+            url: 'http://example.com/Location',
+            extension: ['MA']
+          }
+        ]
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/`output.extension` field should be a JSON Object/)
+    end
+
+    it 'fails if the state extension is not an array' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239+02:00',
+        request: 'http://example.com/$bulk-publish',
+        output: [
+          {
+            type: 'Location',
+            url: 'http://example.com/Location',
+            extension: {
+              state: 'MA'
+            }
+          }
+        ]
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/`output.extension.state` field should be an Array/)
+    end
+
+    it 'fails if the state extension contains a non-string' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239+02:00',
+        request: 'http://example.com/$bulk-publish',
+        output: [
+          {
+            type: 'Location',
+            url: 'http://example.com/Location',
+            extension: {
+              state: ['MA', 123, 'VA']
+            }
+          }
+        ]
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/The following `output.extension.state` entries are not Strings/)
+    end
+
+    it 'passes if the manifest is well-formed' do
+      manifest = {
+        transactionTime: '2015-02-07T13:28:17.239+02:00',
+        request: 'http://example.com/$bulk-publish',
+        output: [
+          {
+            type: 'Location',
+            url: 'http://example.com/Location',
+            extension: {
+              state: ['MA', 'VA']
+            }
+          }
+        ]
+      }
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('pass')
+    end
+  end
 end
