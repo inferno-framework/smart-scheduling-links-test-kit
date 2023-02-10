@@ -1,6 +1,11 @@
 module SMARTSchedulingLinks
   module ResourceChecker
-    def validate_response(url, profile_url, max_lines)
+    def max_lines
+      @max_lines ||=
+          max_lines_per_file.to_i == 0 ? 100 : max_lines_per_file.to_i
+    end
+
+    def validate_response(url, profile_url)
       previous_chunk = String.new
 
       line_count = 0
@@ -35,6 +40,10 @@ module SMARTSchedulingLinks
       a bulk publication manifest.
     )
 
+    input :max_lines_per_file,
+          title: 'Maximum number of resources to validate per file',
+          default: '100'
+
     test do
       include ResourceChecker
       id :location_resources
@@ -53,7 +62,7 @@ module SMARTSchedulingLinks
         location_urls = JSON.parse(locations_json)
 
         location_urls.each do |location_url|
-          validate_response(location_url, profile_url, 100)
+          validate_response(location_url, profile_url)
 
           assert(messages.none? { |message| message[:type] == 'error' })
         end
@@ -78,7 +87,7 @@ module SMARTSchedulingLinks
         slot_urls = JSON.parse(slots_json)
 
         slot_urls.each do |slot_url|
-          validate_response(slot_url, profile_url, 100)
+          validate_response(slot_url, profile_url)
 
           assert(messages.none? { |message| message[:type] == 'error' })
         end
@@ -103,7 +112,7 @@ module SMARTSchedulingLinks
         schedule_urls = JSON.parse(schedules_json)
 
         schedule_urls.each do |schedule_url|
-          validate_response(schedule_url, profile_url, 100)
+          validate_response(schedule_url, profile_url)
 
           assert(messages.none? { |message| message[:type] == 'error' })
         end
