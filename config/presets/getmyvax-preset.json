@@ -1,0 +1,13 @@
+{
+  "title": "getmyvax.org",
+  "id": "getmyvax",
+  "test_suite_id": "smart_scheduling_links",
+  "inputs": [
+    {
+    "name": "url",
+    "value": "https://getmyvax.org/smart-scheduling/$bulk-publish",
+    "_title": "Bulk Publication Manifest Url",
+    "_type": "text"
+  }
+  ]
+}

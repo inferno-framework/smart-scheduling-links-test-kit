@@ -1,0 +1,13 @@
+{
+  "title": "SMART-on-FHIR Github",
+  "id": "smart-github",
+  "test_suite_id": "smart_scheduling_links",
+  "inputs": [
+    {
+      "name": "url",
+      "value": "https://raw.githubusercontent.com/smart-on-fhir/smart-scheduling-links/master/examples/$bulk-publish",
+      "_title": "Bulk Publication Manifest Url",
+      "_type": "text"
+    }
+  ]
+}

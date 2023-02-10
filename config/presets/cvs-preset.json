@@ -1,0 +1,13 @@
+{
+  "title": "CVS",
+  "id": "cvs",
+  "test_suite_id": "smart_scheduling_links",
+  "inputs": [
+    {
+      "name": "url",
+      "value": "https://www.cvs.com/immunizations/inventory/data/$bulk-publish",
+      "_title": "Bulk Publication Manifest Url",
+      "_type": "text"
+    }
+  ]
+}
