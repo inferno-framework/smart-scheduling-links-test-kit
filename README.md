@@ -14,6 +14,16 @@ To run these tests using [Docker](https://www.docker.com/):
 For more information on running/developing tests in Inferno, see [Inferno's
 documentation](https://inferno-framework.github.io/inferno-core/getting-started.html).
 
+## Updating This Test Kit
+This test kit depends on profiles generated from FHIR Shorthand in the `fsh`
+directory. If any changes are made to the structure of the resources in the
+spec, the files in `fsh/input/fsh` will need to be updated to reflect those
+changes. The readme in the `fsh` directory contains instructions for generating
+the profiles and using them in the test kit.
+
+Any other changes made to the spec will require updating the files in `lib` to
+reflect the changes.
+
 ## License
 Copyright 2023 The MITRE Corporation
 

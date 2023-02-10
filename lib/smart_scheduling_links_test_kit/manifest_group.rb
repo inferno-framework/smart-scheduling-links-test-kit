@@ -2,6 +2,10 @@ module SMARTSchedulingLinks
   class ManifestGroup < Inferno::TestGroup
     id :smart_scheduling_links_manifest
     title 'Bulk Publication Manifest'
+    description %(
+      This group of tests retrieves a bulk publication manifest and verifies
+      that it is properly structured.
+    )
 
     input :url,
           title: 'Bulk Publication Manifest Url'
