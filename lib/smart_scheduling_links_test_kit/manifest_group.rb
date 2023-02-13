@@ -168,5 +168,56 @@ module SMARTSchedulingLinks
         end
       end
     end
+
+    test do
+      id :manifest_state_extensions
+      title 'Slot Publisher annotates each output with a list of states or jurisdictions'
+      description %(
+        Slot Publishers SHOULD annotate each output with a list of states or
+        jurisdictions as a hint to clients, allowing clients to focus on
+        fetching data for the specific states or geographical regions where they
+        operate; this is helpful for clients with limited regions of interest.
+      )
+      optional
+
+      input :manifest_json, type: 'textarea'
+
+      run do
+        skip_if manifest_json.blank?, 'No manifest received'
+        assert_valid_json(manifest_json)
+
+        manifest = JSON.parse(manifest_json)
+        assert manifest.is_a?(Hash), "Expected manifest to be a JSON object, but found `#{manifest.class}`"
+
+        manifest_outputs = manifest['output']
+        assert manifest_outputs.is_a?(Array),
+               "`output` field should be an `Array`, but found `#{manifest_outputs.class}`"
+
+        assert manifest_outputs.all? { |output| output.is_a?(Hash) },
+               "Not all manifest outputs are JSON objects."
+
+        resource_types = ['Location', 'Schedule', 'Slot']
+
+        manifest_outputs.select! { |output| resource_types.include? output['type'] }
+
+        output_counts = Hash.new { |hash, key| hash[key] = 0 }
+        state_extension_counts = Hash.new { |hash, key| hash[key] = 0 }
+
+        manifest_outputs.each do |output|
+          output_counts[output['type']] += 1
+          state_extension_counts[output['type']] += 1 if output.dig('extension', 'state').present?
+        end
+
+        summary =
+          resource_types
+            .map { |type| "* #{state_extension_counts[type]}/#{output_counts[type]} #{type} outputs included `state` extension" }
+            .join("\n")
+
+        assert resource_types.all? { |type| output_counts[type] == state_extension_counts[type] },
+               "Not all outputs included the `state` extension: \n#{summary}"
+
+        pass "All outputs included the `state` extension: \n#{summary}"
+      end
+    end
   end
 end

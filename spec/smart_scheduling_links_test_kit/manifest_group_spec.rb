@@ -267,4 +267,58 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
       expect(result.result).to eq('pass')
     end
   end
+
+  describe 'manifest state extensions test' do
+    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_state_extensions' } }
+
+    it 'passes if state extensions are present for all outputs' do
+      manifest = {
+        output: [
+          {
+            type: 'Location',
+            extension: { state: ['MA', 'VA'] }
+          },
+          {
+            type: 'Schedule',
+            extension: { state: ['MA', 'VA'] }
+          },
+          {
+            type: 'Slot',
+            extension: { state: ['MA', 'VA'] }
+          }
+        ]
+      }
+
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails if state extensions are not present for all outputs' do
+      manifest = {
+        output: [
+          {
+            type: 'Location',
+            extension: { state: ['MA', 'VA'] }
+          },
+          {
+            type: 'Schedule',
+            extension: { state: ['MA', 'VA'] }
+          },
+          {
+            type: 'Slot',
+            extension: { state: ['MA', 'VA'] }
+          },
+          {
+            type: 'Slot'
+          }
+        ]
+      }
+
+      result = run(test, manifest_json: manifest.to_json)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to start_with('Not all outputs included')
+    end
+  end
 end
