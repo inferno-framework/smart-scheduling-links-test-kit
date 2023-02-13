@@ -86,6 +86,35 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
     end
   end
 
+  describe 'manifest cache-control max-age header test' do
+    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_cache_control_header' } }
+
+    it 'passes if a Cache-Control: max-age header is received' do
+      repo_create(
+        :request,
+        name: 'manifest',
+        test_session_id: test_session.id,
+        headers: [{ type: 'response', name: 'Cache-Control', value: 'max-age=300' }]
+      )
+
+      result = run(test)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails if no Cache-Control: max-age header is received' do
+      repo_create(
+        :request,
+        name: 'manifest',
+        test_session_id: test_session.id
+      )
+
+      result = run(test)
+
+      expect(result.result).to eq('fail')
+    end
+  end
+
   describe 'manifest structure test' do
     let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_structure' } }
 

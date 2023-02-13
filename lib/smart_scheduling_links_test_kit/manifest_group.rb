@@ -56,6 +56,28 @@ module SMARTSchedulingLinks
     end
 
     test do
+      id :manifest_cache_control_header
+      title 'Slot Publisher includes a Cache-Control: max-age Header'
+      description %(
+        Slot Publishers SHOULD include a `Cache-Control: max-age=<seconds>`
+        header as a hint to clients about how long (in seconds) to wait before
+        polling next. For example, `Cache-Control: max-age=300` indicates a
+        preferred polling interval of five minutes.
+      )
+      optional
+
+      uses_request :manifest
+
+      run do
+        assert_response_status(200)
+
+        cache_control_header = request.response_header('cache-control')&.value
+        assert cache_control_header&.match?(/max-age=\d+/),
+               "No `Cache-Control: max-age=<seconds>` header received."
+      end
+    end
+
+    test do
       id :manifest_structure
       title 'Bulk Publication Manifest has correct structure'
       description %(
