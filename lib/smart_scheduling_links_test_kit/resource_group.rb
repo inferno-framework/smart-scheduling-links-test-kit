@@ -61,11 +61,26 @@ module SMARTSchedulingLinks
 
         location_urls = JSON.parse(locations_json)
 
+        vtrcks_pin_found = false
+
         location_urls.each do |location_url|
           validate_response(location_url, profile_url)
 
+          request.response_body&.each_line do |line|
+            break if vtrcks_pin_found
+
+            location = FHIR.from_contents(line)
+            vtrcks_pin_found =
+              location
+                &.identifier
+                &.any? { |identifier| identifier.system == 'https://cdc.gov/vaccines/programs/vtrcks' }
+
+          end
+
           assert(messages.none? { |message| message[:type] == 'error' })
         end
+
+        assert vtrcks_pin_found, "No Locations included a VTrckS PIN."
       end
     end
 
