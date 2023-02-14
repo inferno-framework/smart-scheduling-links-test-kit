@@ -17,6 +17,51 @@ module SMARTSchedulingLinks
     validator do
       url ENV.fetch('VALIDATOR_URL')
       exclude_message { |message| message.type == 'info' }
+      perform_additional_validation do |resource, profile_url|
+        next unless profile_url == 'http://fhir-registry.smarthealthit.org/StructureDefinition/vaccine-slot'
+
+        begin
+          start_time = DateTime.parse(resource.start)
+          end_time = DateTime.parse(resource.end)
+        rescue StandardError
+          next
+        end
+
+        messages = []
+
+        slot_hours = (end_time - start_time).days.in_hours
+
+        if slot_hours > 1
+          warning_message = <<~MESSAGE
+            #{resource.resourceType}/#{resource.id}: Slot duration is
+            #{slot_hours.abs.round(1)} hours, but `start` and `end` SHOULD
+            identify a narrow window of time.
+          MESSAGE
+
+          messages << {
+            type: 'warning',
+            message: warning_message
+          }
+
+          has_capacity_extension = resource.extension&.any? do |extension|
+            extension.url == 'http://fhir-registry.smarthealthit.org/StructureDefinition/slot-capacity'
+          end
+
+          if !has_capacity_extension
+            warning_message = <<~MESSAGE
+              #{resource.resourceType}/#{resource.id}: Slot should include a
+              #capacity extension if its duration is longer than an hour.
+            MESSAGE
+
+            messages << {
+              type: 'warning',
+              message: warning_message
+            }
+          end
+        end
+
+        messages
+      end
     end
 
     group from: :smart_scheduling_links_manifest
