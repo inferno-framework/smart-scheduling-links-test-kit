@@ -8,6 +8,8 @@ module SMARTSchedulingLinks
     def validate_response(url, profile_url)
       previous_chunk = String.new
 
+      @valid_resource_count ||= 0
+
       line_count = 0
 
       process_body = lambda do |new_chunk, _|
@@ -22,7 +24,7 @@ module SMARTSchedulingLinks
           assert_valid_json(line)
 
           resource = FHIR.from_contents(line)
-          resource_is_valid?(resource:, profile_url:)
+          @valid_resource_count += 1 if resource_is_valid?(resource:, profile_url:)
 
           line_count += 1
         end
@@ -77,10 +79,15 @@ module SMARTSchedulingLinks
 
           end
 
-          assert(messages.none? { |message| message[:type] == 'error' })
+          assert(
+            messages.none? { |message| message[:type] == 'error' },
+            "Succesfully validated #{@valid_resource_count} resources. Test stops after first invalid resource"
+          )
         end
 
         assert vtrcks_pin_found, "No Locations included a VTrckS PIN."
+
+        pass "Successfully validated #{@valid_resource_count} resources."
       end
     end
 
@@ -104,8 +111,13 @@ module SMARTSchedulingLinks
         slot_urls.each do |slot_url|
           validate_response(slot_url, profile_url)
 
-          assert(messages.none? { |message| message[:type] == 'error' })
+          assert(
+            messages.none? { |message| message[:type] == 'error' },
+            "Succesfully validated #{@valid_resource_count} resources. Test stops after first invalid resource"
+          )
         end
+
+        pass "Successfully validated #{@valid_resource_count} resources."
       end
     end
 
@@ -129,8 +141,13 @@ module SMARTSchedulingLinks
         schedule_urls.each do |schedule_url|
           validate_response(schedule_url, profile_url)
 
-          assert(messages.none? { |message| message[:type] == 'error' })
+          assert(
+            messages.none? { |message| message[:type] == 'error' },
+            "Succesfully validated #{@valid_resource_count} resources. Test stops after first invalid resource"
+          )
         end
+
+        pass "Successfully validated #{@valid_resource_count} resources."
       end
     end
   end
