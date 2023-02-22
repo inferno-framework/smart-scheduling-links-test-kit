@@ -1,5 +1,6 @@
 require_relative 'smart_scheduling_links_test_kit/manifest_group'
 require_relative 'smart_scheduling_links_test_kit/resource_group'
+require_relative 'smart_scheduling_links_test_kit/version'
 
 module SMARTSchedulingLinks
   class Suite < Inferno::TestSuite
@@ -13,6 +14,7 @@ module SMARTSchedulingLinks
       retrieving the files listed in the manifest and validating the resources
       they contain.
     )
+    version VERSION
 
     validator do
       url ENV.fetch('VALIDATOR_URL')
