@@ -8,10 +8,10 @@ module SMARTSchedulingLinks
     title 'SMART Scheduling Links'
     description %(
       Tests for [SMART Scheduling
-      Links](https://github.com/smart-on-fhir/smart-scheduling-links)'.
+      Links](https://github.com/smart-on-fhir/smart-scheduling-links).
 
       These tests work by retrieving a bulk publication manifest, then
-      retrieving the files listed in the manifest and validating the resources
+      retrieving the files listed in the manifest and validating the HL7® FHIR® resources
       they contain.
     )
     version VERSION
