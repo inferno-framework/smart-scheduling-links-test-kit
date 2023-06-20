@@ -15,11 +15,11 @@ For more information on running/developing tests in Inferno, see [Inferno's
 documentation](https://inferno-framework.github.io/inferno-core/getting-started.html).
 
 ## Updating This Test Kit
-This test kit depends on profiles generated from FHIR Shorthand in the `fsh`
-directory. If any changes are made to the structure of the resources in the
-spec, the files in `fsh/input/fsh` will need to be updated to reflect those
-changes. The readme in the `fsh` directory contains instructions for generating
-the profiles and using them in the test kit.
+This test kit depends on HL7® FHIR® profiles generated from FHIR Shorthand in
+the `fsh` directory. If any changes are made to the structure of the resources
+in the spec, the files in `fsh/input/fsh` will need to be updated to reflect
+those changes. The readme in the `fsh` directory contains instructions for
+generating the profiles and using them in the test kit.
 
 Any other changes made to the spec will require updating the files in `lib` to
 reflect the changes.
@@ -37,3 +37,8 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
+
+## Trademark Notice
+
+HL7, FHIR and the FHIR [FLAME DESIGN] are the registered trademarks of Health
+Level Seven International and their use does not constitute endorsement by HL7.
