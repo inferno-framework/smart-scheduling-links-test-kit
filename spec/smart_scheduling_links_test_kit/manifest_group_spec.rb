@@ -88,6 +88,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
 
   describe 'manifest cache-control max-age header test' do
     let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_cache_control_header' } }
+    let(:url) { 'http://example.com/$bulk-publish' }
 
     it 'passes if a Cache-Control: max-age header is received' do
       repo_create(
@@ -97,7 +98,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
         headers: [{ type: 'response', name: 'Cache-Control', value: 'max-age=300' }]
       )
 
-      result = run(test)
+      result = run(test, url:)
 
       expect(result.result).to eq('pass')
     end
@@ -109,7 +110,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
         test_session_id: test_session.id
       )
 
-      result = run(test)
+      result = run(test, url:)
 
       expect(result.result).to eq('fail')
     end
@@ -117,16 +118,17 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
 
   describe 'manifest structure test' do
     let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_structure' } }
+    let (:url) { 'http://example.com/$bulk-publish' }
 
     it 'fails if the manifest is not a JSON object' do
-      result = run(test, manifest_json: [].to_json)
+      result = run(test, url:, manifest_json: [].to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to eq('Expected manifest to be a JSON object, but found `Array`')
     end
 
     it 'fails if a field is the wrong type' do
-      result = run(test, manifest_json: {}.to_json)
+      result = run(test, url:, manifest_json: {}.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to eq('`transactionTime` field should be `String`, but found `NilClass`')
@@ -138,7 +140,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
         request: 'abc',
         output: []
       }
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/`transactionTime` is not in `YYYY-MM-DDThh:mm:ss.sss\+zz:zz` format:/)
@@ -150,7 +152,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
         request: 'httpexample.com/$bulk-publish',
         output: []
       }
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/is not a valid URI/)
@@ -167,7 +169,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           }
         ]
       }
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/`output\.url` field should be/)
@@ -184,8 +186,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           }
         ]
       }
-      result = run(test, manifest_json: manifest.to_json)
-
+      result = run(test, url:, manifest_json: manifest.to_json)
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/is not a valid URI/)
     end
@@ -202,7 +203,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           }
         ]
       }
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/`output.extension` field should be a JSON Object/)
@@ -222,7 +223,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           }
         ]
       }
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/`output.extension.state` field should be an Array/)
@@ -242,7 +243,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           }
         ]
       }
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/The following `output.extension.state` entries are not Strings/)
@@ -262,7 +263,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           }
         ]
       }
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('pass')
     end
@@ -270,6 +271,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
 
   describe 'manifest state extensions test' do
     let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_state_extensions' } }
+    let (:url) { 'http://example.com/$bulk-publish' }
 
     it 'passes if state extensions are present for all outputs' do
       manifest = {
@@ -289,8 +291,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
         ]
       }
 
-      result = run(test, manifest_json: manifest.to_json)
-
+      result = run(test, url:, manifest_json: manifest.to_json)
       expect(result.result).to eq('pass')
     end
 
@@ -315,7 +316,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
         ]
       }
 
-      result = run(test, manifest_json: manifest.to_json)
+      result = run(test, url:, manifest_json: manifest.to_json)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to start_with('Not all outputs included')
