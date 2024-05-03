@@ -21,8 +21,6 @@ module SMARTSchedulingLinks
     ].freeze
 
     fhir_resource_validator do
-      url ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')
-
       igs 'igs/package.tgz'
 
       exclude_message do |message|
