@@ -21,7 +21,7 @@ module SMARTSchedulingLinks
     ].freeze
 
     fhir_resource_validator do
-      igs 'igs/package.tgz'
+      igs 'igs/smart_scheduling_links_ig.tgz'
 
       exclude_message do |message|
         message.type == 'info' ||
