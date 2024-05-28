@@ -16,7 +16,7 @@ Once these are installed, run:
 * `sushi`
 * `_updatePublisher.sh` (mac/linux) or `_updatePublisher.bat` (windows)
 * `_genonce.sh` (mac/linux) or `_genonce.bat` (windows)
-* `cp output/package.tgz ../lib/smart_scheduling_links_test_kit/igs/`
+* `cp output/package.tgz ../lib/smart_scheduling_links_test_kit/igs/smart_scheduling_links_ig.tgz`
    
 ## License
 Copyright 2023 The MITRE Corporation

@@ -16,9 +16,18 @@ module SMARTSchedulingLinks
     )
     version VERSION
 
-    validator do
-      url ENV.fetch('VALIDATOR_URL')
-      exclude_message { |message| message.type == 'info' }
+    VALIDATION_MESSAGE_FILTERS = [
+      /\A\S+: \S+: URL value '.*' does not resolve/
+    ].freeze
+
+    fhir_resource_validator do
+      igs 'igs/smart_scheduling_links_ig.tgz'
+
+      exclude_message do |message|
+        message.type == 'info' ||
+          VALIDATION_MESSAGE_FILTERS.any? { |filter| filter.match? message.message }
+      end
+
       perform_additional_validation do |resource, profile_url|
         next unless profile_url == 'http://fhir-registry.smarthealthit.org/StructureDefinition/vaccine-slot'
 

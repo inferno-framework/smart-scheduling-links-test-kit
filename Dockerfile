@@ -9,6 +9,7 @@ WORKDIR $INSTALL_PATH
 ADD lib/smart_scheduling_links_test_kit/version.rb $INSTALL_PATH/lib/smart_scheduling_links_test_kit/version.rb
 ADD *.gemspec $INSTALL_PATH
 ADD Gemfile* $INSTALL_PATH
+RUN gem update --system
 RUN gem install bundler
 # The below RUN line is commented out for development purposes, because any change to the 
 # required gems will break the dockerfile build process.
