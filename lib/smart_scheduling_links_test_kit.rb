@@ -1,3 +1,4 @@
+require_relative 'smart_scheduling_links_test_kit/metadata.rb'
 require_relative 'smart_scheduling_links_test_kit/manifest_group'
 require_relative 'smart_scheduling_links_test_kit/resource_group'
 require_relative 'smart_scheduling_links_test_kit/version'
