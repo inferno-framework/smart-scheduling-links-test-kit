@@ -1,16 +1,15 @@
-module SMARTSchedulingLinksTestKit
+module SMARTSchedulingLinks
   class Metadata < Inferno::TestKit
     id :smart_scheduling_links_test_kit
     title 'SMART Scheduling Links Test Kit'
     suite_ids ['smart_scheduling_links'] 
     tags []
-    last_updated ::SmartSchedulingLinksTestKit::LAST_UPDATED
-    version ::SmartSchedulingLinksTestKit::VERSION
+    last_updated ::SMARTSchedulingLinks::LAST_UPDATED
+    version ::SMARTSchedulingLinks::VERSION
     maturity 'Medium'
     authors ['Inferno Team']
     repo 'https://github.com/inferno-framework/smart-scheduling-links-test-kit'
     description <<~DESCRIPTION
-
       The SMART Scheduling Links Test Kit provides an executable set of tests
       for the
       [SMART Scheduling Links Draft IG](https://github.com/smart-on-fhir/smart-scheduling-links).
@@ -22,10 +21,9 @@ module SMARTSchedulingLinksTestKit
       This test kit is open source and freely available for use or adoption
       by the health IT community including EHR vendors, health app developers,
       and testing labs. It is built using the
-      [Inferno Framework](#TODO). TODO !!!!!
-      The Inferno
-      Framework is designed for reuse and aims to make it easier to build
-      test kits for any FHIR-based data exchange.
+      [Inferno Framework](https://inferno-framework.github.io/).
+      The Inferno Framework is designed for reuse and aims to make it easier
+      to build test kits for any FHIR-based data exchange.
       
       ## Status
       
@@ -43,7 +41,8 @@ module SMARTSchedulingLinksTestKit
       
       ## Repository
       
-      The SMART Scheduling Links Test Kit GitHub repository can be found here.
+      The SMART Scheduling Links Test Kit GitHub repository can be
+      [found here](https://github.com/inferno-framework/smart-scheduling-links).
       
       ## Providing Feedback and Reporting Issues
       
@@ -56,8 +55,9 @@ module SMARTSchedulingLinksTestKit
         interpretation of the IG’s requirements.
       - User experience, such as confusing or missing information in the test UI.
       
-      Please report any issues with this set of tests in the issues section of the
-      repository.
+      Please report any issues with this set of tests in the
+      [issues section](https://github.com/inferno-framework/smart-scheduling-links/issues)
+      of the repository.
     DESCRIPTION
   end
 end

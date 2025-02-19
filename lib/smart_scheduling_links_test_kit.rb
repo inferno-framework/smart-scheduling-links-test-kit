@@ -1,4 +1,4 @@
-require_relative 'smart_scheduling_links_test_kit/metadata.rb'
+require_relative 'smart_scheduling_links_test_kit/metadata'
 require_relative 'smart_scheduling_links_test_kit/manifest_group'
 require_relative 'smart_scheduling_links_test_kit/resource_group'
 require_relative 'smart_scheduling_links_test_kit/version'
@@ -15,7 +15,24 @@ module SMARTSchedulingLinks
       retrieving the files listed in the manifest and validating the HL7® FHIR® resources
       they contain.
     )
-    version VERSION
+
+    links [
+      {
+        type: 'report_issue',
+        label: 'Report Issue',
+        url: 'https://github.com/inferno-framework/smart-scheduling-links-test-kit/issues/'
+      },
+      {
+        type: 'source_code',
+        label: 'Open Source',
+        url: 'https://github.com/inferno-framework/smart-scheduling-links-test-kit/'
+      },
+      {
+        type: 'download',
+        label: 'Download', 
+        url: 'https://github.com/inferno-framework/smart-scheduling-links-test-kit/releases/'
+      }
+    ]
 
     VALIDATION_MESSAGE_FILTERS = [
       /\A\S+: \S+: URL value '.*' does not resolve/
