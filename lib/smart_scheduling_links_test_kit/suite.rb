@@ -77,7 +77,7 @@ module SMARTSchedulingLinks
           if !has_capacity_extension
             warning_message = <<~MESSAGE
               #{resource.resourceType}/#{resource.id}: Slot should include a
-              #capacity extension if its duration is longer than an hour.
+              capacity extension if its duration is longer than an hour.
             MESSAGE
 
             messages << {
