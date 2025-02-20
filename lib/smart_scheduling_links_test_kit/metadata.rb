@@ -29,7 +29,7 @@ module SMARTSchedulingLinks
       
       These tests are a DRAFT intended to allow SMART Scheduling Links server
       implementers to perform checks of their server against the current draft
-      SMART Scheduling Links requrirements.
+      SMART Scheduling Links requirements.
       
       The test kit currently tests the following requirements:
       
