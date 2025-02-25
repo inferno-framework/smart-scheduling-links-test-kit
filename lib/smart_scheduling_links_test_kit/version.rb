@@ -1,4 +1,4 @@
 module SMARTSchedulingLinks
-  VERSION = '0.2.1'.freeze           # TODO breaking change
-  LAST_UPDATED = '2024-11-06'.freeze
+  VERSION = '0.3.0'.freeze          
+  LAST_UPDATED = '2025-02-25'.freeze
 end
