@@ -1,3 +1,5 @@
+require_relative 'version'
+
 module SMARTSchedulingLinks
   class Metadata < Inferno::TestKit
     id :smart_scheduling_links_test_kit
