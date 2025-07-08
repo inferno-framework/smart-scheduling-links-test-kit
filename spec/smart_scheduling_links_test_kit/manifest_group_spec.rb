@@ -1,25 +1,13 @@
 RSpec.describe SMARTSchedulingLinks::ManifestGroup do
-  let(:suite) { Inferno::Repositories::TestSuites.new.find('smart_scheduling_links') }
-  let(:group) { described_class }
-  let(:session_data_repo) { Inferno::Repositories::SessionData.new }
-  let(:test_session) { repo_create(:test_session, test_suite_id: suite.id) }
-
-  def run(runnable, inputs = {})
-    test_run_params = { test_session_id: test_session.id }.merge(runnable.reference_hash)
-    test_run = Inferno::Repositories::TestRuns.new.create(test_run_params)
-    inputs.each do |name, value|
-      session_data_repo.save(test_session_id: test_session.id, name: name, value: value, type: 'text')
-    end
-    Inferno::TestRunner.new(test_session: test_session, test_run: test_run).run(runnable)
-  end
+  let(:suite_id) { 'smart_scheduling_links' }
 
   describe 'manifest url test' do
-    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_url_form' } }
+    let(:test) { find_test suite, 'manifest_url_form' }
 
     it 'passes if a valid bulk publish url is used' do
       url = 'http://example.com/$bulk-publish'
 
-      result = run(test, url: url)
+      result = run(test, url:)
 
       expect(result.result).to eq('pass')
     end
@@ -27,7 +15,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
     it 'fails if the url does not end in $bulk-publish' do
       url = 'http://example.com/$bulk-publishh'
 
-      result = run(test, url: url)
+      result = run(test, url:)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/does not end with/)
@@ -36,7 +24,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
     it 'fails if the url is not a valid url' do
       url = 'httpexample.com/$bulk-publish'
 
-      result = run(test, url: url)
+      result = run(test, url:)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to match(/is not a valid URI/)
@@ -44,7 +32,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
   end
 
   describe 'manifest download test' do
-    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_download' } }
+    let(:test) { find_test suite, 'manifest_download' }
     let(:url) { 'http://example.com/$bulk-publish' }
 
     it 'passes if a 200 with valid JSON is received' do
@@ -53,7 +41,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           .with(headers: { 'Accept' => 'application/json' })
           .to_return(status: 200, body: {}.to_json)
 
-      result = run(test, url: url)
+      result = run(test, url:)
 
       expect(result.result).to eq('pass')
       expect(manifest_request).to have_been_made.once
@@ -65,7 +53,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           .with(headers: { 'Accept' => 'application/json' })
           .to_return(status: 400, body: {}.to_json)
 
-      result = run(test, url: url)
+      result = run(test, url:)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to include('400')
@@ -78,7 +66,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
           .with(headers: { 'Accept' => 'application/json' })
           .to_return(status: 200, body: '{')
 
-      result = run(test, url: url)
+      result = run(test, url:)
 
       expect(result.result).to eq('fail')
       expect(result.result_message).to include('JSON')
@@ -87,7 +75,7 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
   end
 
   describe 'manifest cache-control max-age header test' do
-    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_cache_control_header' } }
+    let(:test) { find_test suite, 'manifest_cache_control_header' }
     let(:url) { 'http://example.com/$bulk-publish' }
 
     it 'passes if a Cache-Control: max-age header is received' do
@@ -117,8 +105,8 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
   end
 
   describe 'manifest structure test' do
-    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_structure' } }
-    let (:url) { 'http://example.com/$bulk-publish' }
+    let(:test) { find_test suite, 'manifest_structure' }
+    let(:url) { 'http://example.com/$bulk-publish' }
 
     it 'fails if the manifest is not a JSON object' do
       result = run(test, url:, manifest_json: [].to_json)
@@ -270,8 +258,8 @@ RSpec.describe SMARTSchedulingLinks::ManifestGroup do
   end
 
   describe 'manifest state extensions test' do
-    let(:test) { group.tests.find { |test| test.id.to_s.end_with? 'manifest_state_extensions' } }
-    let (:url) { 'http://example.com/$bulk-publish' }
+    let(:test) { find_test suite, 'manifest_state_extensions' }
+    let(:url) { 'http://example.com/$bulk-publish' }
 
     it 'passes if state extensions are present for all outputs' do
       manifest = {
