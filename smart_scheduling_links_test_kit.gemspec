@@ -4,7 +4,6 @@ Gem::Specification.new do |spec|
   spec.name          = 'smart_scheduling_links_test_kit'
   spec.version       = SMARTSchedulingLinks::VERSION
   spec.authors       = ['Inferno Team']
-  spec.email         = ['inferno@groups.mitre.org']
   spec.date          = Time.now.utc.strftime('%Y-%m-%d')
   spec.summary       = 'SMART Scheduling Links Test Kit'
   spec.description   = 'SMART Scheduling Links Test Kit'
